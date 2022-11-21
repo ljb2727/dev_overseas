@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 
 import {
@@ -28,7 +28,9 @@ import AlertDialogSlide from "components/detail/AlertDialogSlide";
 import AlertDialogDelete from "components/detail/AlertDialogDelete";
 import AppBar from "components/common/AppBar";
 import InfoText from "components/common/InfoText";
-import { GetData, Test } from "store/api.js";
+import Loading from "components/common/Loading";
+
+import { setFavoriteList } from "store/index.js";
 
 export default function Detail() {
   const navigate = useNavigate();
@@ -37,6 +39,7 @@ export default function Detail() {
   const target = offer.find((e) => e.id === id);
   const [favorite, setFavorite] = useState(false);
   const link = window.location.search?.substr(1);
+  const dispatch = useDispatch();
 
   //const user_array = JSON.parse(localStorage.getItem("xgolfUserData"));
   const user_array = JSON.parse(localStorage.getItem("xgolfUserData"));
@@ -63,77 +66,11 @@ export default function Detail() {
   }, []);
 
   useEffect(() => {
+    //스토어 favorite  watch
     if (favoriteList.map((el) => String(el)).includes(id)) {
       setFavorite(true);
-      //console.log("관심");
-      //console.log(id);
-
-      // const formData = new FormData();
-      // const user_array = JSON.parse(localStorage.getItem("xgolfUserData"));
-      // formData.append("userId", user_array.memb_id);
-      // formData.append("idx", `${id}`);
-      //
-      // const setFavoriteAction = async () => {
-      //   try {
-      //
-      //     const response =  await axios({
-      //       method: "POST",
-      //       url: `https://phpup.xgolf.com/outtour/apply.php`,
-      //       mode: "cors",
-      //       headers: {
-      //         "Content-Type": "multipart/form-data", // Content-Type을 반드시 이렇게 하여야 한다.
-      //       },
-      //       data: formData, // data 전송시에 반드시 생성되어 있는 formData 객체만 전송 하여야 한다.
-      // }).then(function(response){
-      // console.log("result:"+response.data.offerList);
-
-      //dispatch(changeOffer(response.data.offerList));
-
-      // })
-      //
-      //
-      //
-      //
-      //    } catch (e) {
-      //
-      //    }
-      //  };
-      //  setFavoriteAction();
     } else {
       setFavorite(false);
-      //console.log("무관심");
-
-      // const formData = new FormData();
-      // const user_array = JSON.parse(localStorage.getItem("xgolfUserData"));
-      // formData.append("userId", user_array.memb_id);
-      // formData.append("idx", `${id}`);
-      //
-      // const setFavoriteAction = async () => {
-      //   try {
-      //
-      //     const response =  await axios({
-      //       method: "POST",
-      //       url: `https://phpup.xgolf.com/outtour/apply.php`,
-      //       mode: "cors",
-      //       headers: {
-      //         "Content-Type": "multipart/form-data", // Content-Type을 반드시 이렇게 하여야 한다.
-      //       },
-      //       data: formData, // data 전송시에 반드시 생성되어 있는 formData 객체만 전송 하여야 한다.
-      // }).then(function(response){
-      // console.log("result:"+response.data.offerList);
-
-      //dispatch(changeOffer(response.data.offerList));
-
-      // })
-      //
-      //
-      //
-      //
-      //    } catch (e) {
-      //
-      //    }
-      //  };
-      //  setFavoriteAction();
     }
   }, [favoriteList]);
   const onChangeFavorite = (e) => {
@@ -143,6 +80,19 @@ export default function Detail() {
     setFavorite((state) => !state);
 
     console.log("state:" + `${favorite}`);
+    console.log(id);
+    console.log(favoriteList);
+
+    const copyFavoriteList = [...favoriteList];
+    if (copyFavoriteList.includes(String(id))) {
+      const idx = copyFavoriteList.indexOf(String(id));
+      copyFavoriteList.splice(idx, 1);
+      console.log(`@@@@/${copyFavoriteList}`);
+      dispatch(setFavoriteList(copyFavoriteList));
+    } else {
+      copyFavoriteList.push(String(id));
+      dispatch(setFavoriteList(copyFavoriteList));
+    }
 
     //let favoriteSatus = `${favorite}`;
 
@@ -255,7 +205,7 @@ export default function Detail() {
   return (
     <>
       {!jsonLoading ? (
-        "로딩중"
+        <Loading />
       ) : (
         <>
           <AppBar title="해외 회원권" link={link} />

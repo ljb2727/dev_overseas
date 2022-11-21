@@ -7,8 +7,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import NowLoading from "components/common/NowLoading";
 
 function GetData() {
-
-
   const dispatch = useDispatch();
   const [offers, setOffers] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -49,15 +47,15 @@ function GetData() {
           // });
           //
 
-          .get("https://phpup.xgolf.com/outtour/item_list.php?user_id="+user_array.memb_id)
+          .get(
+            "https://phpup.xgolf.com/outtour/item_list.php?user_id=" +
+              user_array.memb_id
+          )
           .then((response) => {
-            //console.log(response);
+            //console.log(response.data);
             //console.log("데이터 가져온다.");
             setOffers(response.data.offerList);
           });
-
-
-
       } catch (e) {
         setError(e);
       }
@@ -71,9 +69,14 @@ function GetData() {
         setError(null);
         setOffers(null);
         setLoading(true);
+        const user_array = JSON.parse(localStorage.getItem("xgolfUserData"));
         const response = await axios
-          .get("https://phpup.xgolf.com/outtour/item_list.php")
+          .get(
+            "https://phpup.xgolf.com/outtour/item_list.php?user_id=" +
+              user_array.memb_id
+          )
           .then((response) => {
+            console.log(response.data);
             setStoreFavorites(response.data.favoriteLists);
           });
       } catch (e) {
