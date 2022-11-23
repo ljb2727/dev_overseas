@@ -17,7 +17,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function AlertDialogSlide() {
-
   const { id } = useParams();
   const [modalOpen, setModalOpen] = React.useState(false);
   const [scroll, setScroll] = React.useState("paper");
@@ -50,16 +49,14 @@ export default function AlertDialogSlide() {
 
     console.log(`${id}`);
 
-
     const formData = new FormData();
     const user_array = JSON.parse(localStorage.getItem("xgolfUserData"));
     formData.append("userId", user_array.memb_id);
     formData.append("idx", `${id}`);
-    formData.append("atype","A");
+    formData.append("atype", "A");
     const Apply = async () => {
       try {
-
-        const response =  await axios({
+        const response = await axios({
           method: "POST",
           url: `https://phpup.xgolf.com/outtour/apply.php`,
           mode: "cors",
@@ -67,31 +64,18 @@ export default function AlertDialogSlide() {
             "Content-Type": "multipart/form-data", // Content-Type을 반드시 이렇게 하여야 한다.
           },
           data: formData, // data 전송시에 반드시 생성되어 있는 formData 객체만 전송 하여야 한다.
-    }).then(function(response){
-   	console.log("result:"+response.data);
+        }).then(function (response) {
+          console.log("result:" + response.data);
 
-    if(response.data=="success")
-    {
-      setSnackSuccess(true);
-
-    }else {
-      setSnackFail(true);
-    }
-
-   })
-
-
-
-
-      } catch (e) {
-
-      }
+          if (response.data == "success") {
+            setSnackSuccess(true);
+          } else {
+            setSnackFail(true);
+          }
+        });
+      } catch (e) {}
     };
     Apply();
-
-
-
-
   };
   return (
     <>
@@ -191,7 +175,7 @@ export default function AlertDialogSlide() {
           severity="info"
           sx={{ width: "100%" }}
         >
-           접수 완료되었습니다.
+          접수 완료되었습니다.
         </Alert>
       </Snackbar>
 
@@ -206,16 +190,9 @@ export default function AlertDialogSlide() {
           severity="info"
           sx={{ width: "100%" }}
         >
-           해당 회원권의 상담 문의 접수한 내역이 있습니다.
+          해당 회원권의 상담 문의 접수한 내역이 있습니다.
         </Alert>
       </Snackbar>
-
-
-
-
-
-
-
     </>
   );
 }

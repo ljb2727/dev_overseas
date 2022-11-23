@@ -10,14 +10,43 @@ import { useSelector } from "react-redux";
 import TabMenu from "components/common/TabMenu";
 import axios from "axios";
 
-
 function Main() {
   const navigate = useNavigate();
   const { jsonLoading } = useSelector((state) => state);
 
   const params = useParams();
 
-  console.log("userparams:"+params.guid);
+  console.log("userparams:" + params.guid);
+
+  const getUserData = async () => {
+    try {
+      const formData = new FormData();
+      formData.append("userGuid", params.guid);
+
+      const response = await axios({
+        method: "POST",
+        url: `https://phpup.xgolf.com/api/login.php`,
+
+        data: formData, // data 전송시에 반드시 생성되어 있는 formData 객체만 전송 하여야 한다.
+      }).then(function (response) {
+        console.log("result:" + response.data.user.token);
+        console.log("result:" + response.data.user.memb_name);
+        console.log("result:" + response.data.user.memb_id);
+        console.log("result:" + response.data.user.memb_hp);
+        localStorage.setItem(
+          "xgolfUserData",
+          JSON.stringify(response.data.user)
+        );
+
+        const user_array = JSON.parse(localStorage.getItem("xgolfUserData"));
+        console.log("getUserItem:" + user_array.token);
+        console.log("getUserItem:" + user_array.memb_name);
+        console.log("getUserItem:" + user_array.memb_id);
+        console.log("getUserItem:" + user_array.memb_hp);
+      });
+    } catch (e) {}
+  };
+  getUserData();
 
   return (
     <>
@@ -75,46 +104,6 @@ function Main() {
       </Container>
     </>
   );
-
-
-  const getUserData = async () => {
-    try {
-
-      const formData = new FormData();
-      formData.append("userGuid",params.guid);
-
-      const response =  await axios({
-        method: "POST",
-        url: `https://phpup.xgolf.com/api/login.php`,
-
-        data: formData // data 전송시에 반드시 생성되어 있는 formData 객체만 전송 하여야 한다.
-  }).then(function(response){
-  console.log("result:"+response.data.user.token);
-  console.log("result:"+response.data.user.memb_name);
-  console.log("result:"+response.data.user.memb_id);
-  console.log("result:"+response.data.user.memb_hp);
-  localStorage.setItem("xgolfUserData", JSON.stringify(response.data.user));
-
-  const user_array = JSON.parse(localStorage.getItem("xgolfUserData"));
-  console.log("getUserItem:"+user_array.token);
-  console.log("getUserItem:"+user_array.memb_name);
-  console.log("getUserItem:"+user_array.memb_id);
-  console.log("getUserItem:"+user_array.memb_hp);
-
-  })
-
-
-
-
-    } catch (e) {
-
-    }
-  };
-  getUserData();
-
 }
-
-
-
 
 export default Main;

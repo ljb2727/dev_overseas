@@ -69,20 +69,18 @@ export default function MultipleImageUpload({ id, max = 5, img = "" }) {
   const onClickRemove = (src) => {
     console.log("remove");
 
-    console.log(src.match('https'));
+    console.log(src.match("https"));
 
-    if(src.match('https'))
-    {
+    if (src.match("https")) {
       console.log(src);
       console.log(id);
 
       const formData = new FormData();
-      formData.append("file_url",src);
+      formData.append("file_url", src);
 
       const delImg = async () => {
         try {
-
-          const response =  await axios({
+          const response = await axios({
             method: "POST",
             url: `https://phpup.xgolf.com/outtour/file_del.php`,
             mode: "cors",
@@ -90,20 +88,12 @@ export default function MultipleImageUpload({ id, max = 5, img = "" }) {
               "Content-Type": "multipart/form-data", // Content-Type을 반드시 이렇게 하여야 한다.
             },
             data: formData, // data 전송시에 반드시 생성되어 있는 formData 객체만 전송 하여야 한다.
-      }).then(function(response){
-     	console.log("result:"+response.data);
-     })
-
-
-
-
-        } catch (e) {
-
-        }
+          }).then(function (response) {
+            console.log("result:" + response.data);
+          });
+        } catch (e) {}
       };
       delImg();
-
-
     }
 
     const copyImageList = [...detailImgs];
@@ -120,6 +110,11 @@ export default function MultipleImageUpload({ id, max = 5, img = "" }) {
   };
   const handleImageUpload = (e) => {
     const fileArr = e.target.files;
+
+    if (!fileArr.length) {
+      return;
+    }
+
     let fileURLs = [];
     let file;
     let filesLength = fileArr.length > max ? max : fileArr.length;
@@ -183,6 +178,7 @@ export default function MultipleImageUpload({ id, max = 5, img = "" }) {
             multiple={Number(max) > 1 ? true : false}
             accept="image/jpg,image/png,image/jpeg,image/gif"
             onInput={handleImageUpload}
+            key={Date.now()}
           />
           <span style={{ fontSize: "12px", whiteSpace: "nowrap" }}>
             {`${detailImgs.length}`} / {`${max}`}
